@@ -263,9 +263,13 @@ namespace FiniteDifferenceMethod
         public static GridImage LoadFromProject(string projectName)
         {
             string fileName = projectName + Path.DirectorySeparatorChar;
-            if (!Directory.Exists(fileName)) return null;
+            if (!Directory.Exists(fileName)) {
+                
+                return null;
+            }            
             IConverter converter = ConverterFactory.LoadConverter(fileName + "Converter.inf");
             if (converter == null) return null;
+            
             int w, h, d;
             float s;
             if (!File.Exists(fileName + "GridImage.inf")) return null;
