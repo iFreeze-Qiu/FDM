@@ -9,13 +9,15 @@ namespace FiniteDifferenceMethod
     class TimeGridImage
     {
         private static readonly string DEFAULT_DIRECTORY_NAME = "Data";
-        
+        private static double STEP = 0.001;
+
         private static List<GridImage> gridImageList = new List<GridImage>();
+        private static List<double> time = new List<double>();
 
         public static void loadGridImages()
         {
             int index = 0;
-            string directoryName = DEFAULT_DIRECTORY_NAME + index.ToString();
+            string directoryName = DEFAULT_DIRECTORY_NAME + Path.DirectorySeparatorChar + index.ToString();
 
             if (!Directory.Exists(directoryName))
             {
@@ -29,8 +31,10 @@ namespace FiniteDifferenceMethod
                 Console.WriteLine("Loading data from " + directoryName);
                 gridImageList.Add(GridImage.LoadFromProject(directoryName));
                 
+                time.Add(STEP * index);
+                
                 index++;
-                directoryName = DEFAULT_DIRECTORY_NAME + index.ToString();
+                directoryName = DEFAULT_DIRECTORY_NAME + Path.DirectorySeparatorChar + index.ToString();
             }
         }
 
