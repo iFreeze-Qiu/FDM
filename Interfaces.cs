@@ -74,6 +74,9 @@
         void SetLayerZ(int[] data, VariableType variable, int z);
         int GetPoint(VariableType variable, int x, int y, int z);
         void Save(string projectName);
+        //todo: Добавить два метода в интерфейс. 
+        //todo: Убрать наследование GridImage от IGridImage.
+        //todo: сделать изменение текщей gridImage при редактировании поля
     }
 
     interface IConverter

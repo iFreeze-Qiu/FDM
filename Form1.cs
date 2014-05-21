@@ -191,6 +191,16 @@ namespace FiniteDifferenceMethod
         {
             LockControls(false);
         }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            LockControls(false);
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            LockControls(false);
+        }
     }
 }
 

@@ -50,17 +50,30 @@ namespace FiniteDifferenceMethod
             return new TimeGridImage(gridImageList, time);
         }
 
-        public GridImage getGridImage(int index)
+        public GridImage getCurrentGridImage()
         {
-            if (index >= gridImageList.Count)
+          /*  if (index >= gridImageList.Count)
             {
                 //TODO: exception
                 Console.WriteLine("Index out of bounds. Size = " + gridImageList.Count.ToString() + " Required = " + index.ToString());
                 return null;
+            }*/
+
+            return currentGridImage;
+        }
+
+        public void setCurrentGridImage(double time)
+        {
+            if (time >= gridImageList.Count)
+            {
+                //TODO: exception
+                Console.WriteLine("Index out of bounds. Size = " + gridImageList.Count.ToString() + " Required = " + time.ToString());
             }
 
-            return gridImageList[index];
+            currentGridImage = gridImageList[timeToIndex(time)];
+            
         }
+
 
         //------------------------------------ ЗАПОЛНИТЬ!---------------------
 
@@ -121,6 +134,11 @@ namespace FiniteDifferenceMethod
         public void Save(string projectName)
         {
             currentGridImage.Save(projectName);
+        }
+
+        private int timeToIndex(double time)
+        {
+            return (int)time;
         }
     }
 }
