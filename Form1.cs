@@ -166,7 +166,7 @@ namespace FiniteDifferenceMethod
         private void button9_Click(object sender, EventArgs e)
         {
             LockControls(false);
-            _controller.DoLoad("coils and rail");
+            _controller.DoLoad("Data");
         }
 
         private void button10_Click(object sender, EventArgs e)
