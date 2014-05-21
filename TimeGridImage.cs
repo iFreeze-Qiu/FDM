@@ -63,94 +63,64 @@ namespace FiniteDifferenceMethod
         }
 
         //------------------------------------ ЗАПОЛНИТЬ!---------------------
-        public bool IsATruncatedByColor
-        {
-            get { throw new NotImplementedException(); }
-        }
 
-        public bool IsBTruncatedByColor
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public bool IsATruncatedByColor { get; private set; }
+        public bool IsBTruncatedByColor { get; private set; }
+        public bool IsMTruncatedByColor { get; private set; }
+        public bool IsJTruncatedByColor { get; private set; }
 
-        public bool IsMTruncatedByColor
-        {
-            get { throw new NotImplementedException(); }
-        }
 
-        public bool IsJTruncatedByColor
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public IConverter Converter { get; private set; }
 
-        public IConverter Converter
-        {
-            get { throw new NotImplementedException(); }
-        }
 
-        public int Width
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public int Height
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public int Depth
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public float Step
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public int Width { get { return currentGridImage.Width; } }
+        public int Height { get { return currentGridImage.Height; } }
+        public int Depth { get { return currentGridImage.Depth; } }
+        public float Step { get { return currentGridImage.Step; } }
 
         public IGrid ConvertToGrid()
         {
-            throw new NotImplementedException();
+            return currentGridImage.ConvertToGrid();
         }
 
         public int[] GetLayerX(VariableType variable, int x)
         {
-            throw new NotImplementedException();
+            return currentGridImage.GetLayerX(variable, x);
         }
 
         public void SetLayerX(int[] data, VariableType variable, int x)
         {
-            throw new NotImplementedException();
+            currentGridImage.SetLayerX(data, variable, x);
         }
 
         public int[] GetLayerY(VariableType variable, int y)
         {
-            throw new NotImplementedException();
+            return currentGridImage.GetLayerY(variable, y);
         }
 
         public void SetLayerY(int[] data, VariableType variable, int y)
         {
-            throw new NotImplementedException();
+            currentGridImage.SetLayerY(data, variable, y);
         }
 
         public int[] GetLayerZ(VariableType variable, int z)
         {
-            throw new NotImplementedException();
+            return currentGridImage.GetLayerZ(variable, z);
         }
 
         public void SetLayerZ(int[] data, VariableType variable, int z)
         {
-            throw new NotImplementedException();
+            currentGridImage.SetLayerZ(data, variable, z);
         }
 
         public int GetPoint(VariableType variable, int x, int y, int z)
         {
-            throw new NotImplementedException();
+            return currentGridImage.GetPoint(variable, x, y, z);
         }
 
         public void Save(string projectName)
         {
-            throw new NotImplementedException();
+            currentGridImage.Save(projectName);
         }
     }
 }
