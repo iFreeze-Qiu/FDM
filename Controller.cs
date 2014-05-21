@@ -81,7 +81,7 @@ namespace FiniteDifferenceMethod
                 {
                     TimeGridImage timeGridImage = TimeGridImage.loadGridImages();
                     //_model = new Model(GridImage.LoadFromProject(_fileName).ConvertToGrid());
-                    _model = new Model(timeGridImage.getGridImage(1).ConvertToGrid());
+                    _model = new Model(timeGridImage.ConvertToGrid());
                     ModelState = ModelState.Imageing;
                     _image = _model.ShowState();
                 };
