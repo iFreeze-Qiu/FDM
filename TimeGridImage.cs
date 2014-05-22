@@ -12,13 +12,12 @@ namespace FiniteDifferenceMethod
         private static double STEP = 0.001;
 
         private static List<GridImage> gridImageList = new List<GridImage>();
-        private static List<double> time = new List<double>();
 
         public static void loadGridImages()
         {
             int index = 0;
-            string directoryName = DEFAULT_DIRECTORY_NAME + Path.DirectorySeparatorChar + index.ToString();
-
+            string directoryName = DEFAULT_DIRECTORY_NAME + Path.DirectorySeparatorChar + String.Format("{0:d4}", index);
+            
             if (!Directory.Exists(directoryName))
             {
                 //TODO: exception
@@ -31,10 +30,8 @@ namespace FiniteDifferenceMethod
                 Console.WriteLine("Loading data from " + directoryName);
                 gridImageList.Add(GridImage.LoadFromProject(directoryName));
                 
-                time.Add(STEP * index);
-                
                 index++;
-                directoryName = DEFAULT_DIRECTORY_NAME + Path.DirectorySeparatorChar + index.ToString();
+                directoryName = DEFAULT_DIRECTORY_NAME + Path.DirectorySeparatorChar + String.Format("{0:d4}", index);
             }
         }
 
