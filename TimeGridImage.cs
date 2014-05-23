@@ -3,75 +3,112 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Collections;
 
 namespace FiniteDifferenceMethod
 {
     class TimeGridImage : IGridImage
     {
         private static readonly string DEFAULT_DIRECTORY_NAME = "Data";
-        private static double STEP = 0.001;
+        private static readonly int    IMAGES_IN_MEMORY = 3;
 
-        private List<GridImage> gridImageList = new List<GridImage>();
+        /*private List<GridImage> gridImageList = new List<GridImage>();
         private List<double> time = new List<double>();
+=======*/
+        
+        //
+        private static Dictionary<int, GridImage> gridImageDictionary = new Dictionary<int, GridImage>();
 
         private GridImage currentGridImage;
 
-        private TimeGridImage(List<GridImage> gridImageList, List<double> time)
+/*        private TimeGridImage(List<GridImage> gridImageList, List<double> time)
         {
             this.gridImageList = gridImageList;
             this.time = time;
             currentGridImage = gridImageList[1];
+        }*/
+
+/*        public static TimeGridImage loadGridImages()
+        {
+            loadGridImages(getIndexesToLoad(0, IMAGES_IN_MEMORY));
+        }*/
+        
+        private static void loadGridImages(int[] indexes)
+        {
+            disposeUnmatched(indexes);
+            
+            string directoryName;
+            foreach (int indexer in indexes) {
+                directoryName = DEFAULT_DIRECTORY_NAME + Path.DirectorySeparatorChar + String.Format("{0:d4}", indexer);
+                if (Directory.Exists(directoryName) && !gridImageDictionary.ContainsKey(indexer))
+                {
+                    Console.WriteLine("Loading data from " + directoryName);
+                    GridImage gridImage = GridImage.LoadFromProject(directoryName);
+                    gridImageDictionary.Add(gridImage.getFolderNumber(), gridImage);
+                }
+            }            
         }
 
-        public static TimeGridImage loadGridImages()
+        private static void disposeUnmatched(int[] indexesToLoad)
         {
-            int index = 0;
-            string directoryName = DEFAULT_DIRECTORY_NAME + Path.DirectorySeparatorChar + index.ToString();
-            List<GridImage> gridImageList = new List<GridImage>();
-            List<double> time = new List<double>();
-
-            if (!Directory.Exists(directoryName))
+            List<int> imagesToRemove = new List<int>();
+            foreach (KeyValuePair<int, GridImage> entry in gridImageDictionary)
             {
-                //TODO: exception
-                Console.WriteLine("No time data");
-                return null;
+                if (!Array.Exists(
+                        indexesToLoad,
+                        delegate(int r) { return r == entry.Key; }
+                   ))
+                {
+                    imagesToRemove.Add(entry.Key);
+                }
             }
 
-            while (Directory.Exists(directoryName))
+            foreach (int image in imagesToRemove)
             {
-                Console.WriteLine("Loading data from " + directoryName);
-                gridImageList.Add(GridImage.LoadFromProject(directoryName));
-
-                time.Add(STEP * index);
-
-                index++;
-                directoryName = DEFAULT_DIRECTORY_NAME + Path.DirectorySeparatorChar + index.ToString();
+                Console.WriteLine("Dispose " + image.ToString());
+                gridImageDictionary.Remove(image);
             }
-            return new TimeGridImage(gridImageList, time);
         }
 
-        public GridImage getCurrentGridImage()
-        {
-          /*  if (index >= gridImageList.Count)
-            {
-                //TODO: exception
-                Console.WriteLine("Index out of bounds. Size = " + gridImageList.Count.ToString() + " Required = " + index.ToString());
-                return null;
-            }*/
 
-            return currentGridImage;
+        //Загрузка необходимых элементов. В зависимости от алгоритма можно изменить метод, чтобы увеличить производительность.
+        private static int[] getIndexesToLoad(int headIndex, int imageCountInMemory)
+        {
+            int[] indexes = new int[imageCountInMemory];
+
+            for (int i = 0; i < imageCountInMemory; i++)
+            {
+
+                indexes[i] = headIndex - imageCountInMemory / 2 + i;
+            }
+
+            return indexes;
         }
 
         public void setCurrentGridImage(double time)
         {
-            if (time >= gridImageList.Count)
+          /*  if (time >= gridImageList.Count)
             {
                 //TODO: exception
                 Console.WriteLine("Index out of bounds. Size = " + gridImageList.Count.ToString() + " Required = " + time.ToString());
             }
 
-            currentGridImage = gridImageList[timeToIndex(time)];
-            
+            currentGridImage = gridImageList[timeToIndex(time)];*/
+        }
+
+        public GridImage getCurrentGridImage()
+        {
+            int index = 0;
+            if (!gridImageDictionary.ContainsKey(index))
+            {
+                loadGridImages(getIndexesToLoad(index, IMAGES_IN_MEMORY));
+                if (!gridImageDictionary.ContainsKey(index))
+                {
+                    return null;
+                }
+            }
+
+            return gridImageDictionary[index];
         }
 
 

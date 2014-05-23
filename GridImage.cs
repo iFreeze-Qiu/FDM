@@ -34,14 +34,21 @@ namespace FiniteDifferenceMethod
         private delegate void SimpleGridProcessing(IGrid grid, int startX, int endX);
         private static readonly int LogicalProcessors = Environment.ProcessorCount;
         private readonly IAsyncResult[] _results;
+        //for time support
+        private int folderNumber;
+        private float timeStep;
+        private float time;
 
-        private GridImage(int width, int height, int depth, float step, IConverter converter, bool initZeros = false)
+        private GridImage(int width, int height, int depth, float step, int folderNumber, float timeStep, float time, IConverter converter, bool initZeros = false)
         {
             _results = new IAsyncResult[LogicalProcessors];
             _x = width;
             _y = height;
             _z = depth;
             _h = step;
+            this.folderNumber = folderNumber;
+            this.timeStep = timeStep;
+            this.time = time;
             Converter = converter.Clone();
             _a = new int[_x * _y * _z];
             _b = new int[_x * _y * _z];
@@ -77,7 +84,7 @@ namespace FiniteDifferenceMethod
             }
         }
         public GridImage(IGrid grid, IConverter converter)
-            : this(grid.Width, grid.Height, grid.Depth, grid.Step, converter)
+            : this(grid.Width, grid.Height, grid.Depth, grid.Step, 0, 0, 0, converter) //It should work with 0,0,0. But i didn't check it.
         {
             SimpleGridProcessing caller = SubGridImageing;
             for (int i = 0; i < LogicalProcessors; i++)
@@ -270,11 +277,11 @@ namespace FiniteDifferenceMethod
             IConverter converter = ConverterFactory.LoadConverter(fileName + "Converter.inf");
             if (converter == null) return null;
             
-            int w, h, d;
-            float s;
+            int w, h, d, folderNumber;
+            float s, stepTime, time;
             if (!File.Exists(fileName + "GridImage.inf")) return null;
-            LoadInfo(fileName + "GridImage.inf", out w, out h, out d, out s);
-            GridImage image = new GridImage(w, h, d, s, converter, true);
+            LoadInfo(fileName + "GridImage.inf", out w, out h, out d, out s, out folderNumber, out stepTime, out time);
+            GridImage image = new GridImage(w, h, d, s, folderNumber, stepTime, time, converter, true);
             string subDir;
             if (Directory.Exists(fileName + "BorderA"))
             {
@@ -319,7 +326,7 @@ namespace FiniteDifferenceMethod
             string info = Width + "\n" + Height + "\n" + Depth + "\n" + Step.ToString(CultureInfo.InvariantCulture);
             File.WriteAllText(fileName, info);
         }
-        private static void LoadInfo(string fileName, out int width, out int height, out int depth, out float step)
+        private static void LoadInfo(string fileName, out int width, out int height, out int depth, out float step, out int folderNumber, out float timeStep, out float time)
         {
             string[] separators = new[] { " ", "\n", "\r", "\t" };
             string info = File.ReadAllText(fileName);
@@ -328,6 +335,9 @@ namespace FiniteDifferenceMethod
             height = int.Parse(infos[1], NumberStyles.Integer, CultureInfo.InvariantCulture);
             depth = int.Parse(infos[2], NumberStyles.Integer, CultureInfo.InvariantCulture);
             step = float.Parse(infos[3], NumberStyles.Float, CultureInfo.InvariantCulture);
+            folderNumber = int.Parse(infos[4], NumberStyles.Integer, CultureInfo.InvariantCulture);
+            timeStep = float.Parse(infos[5], NumberStyles.Float, CultureInfo.InvariantCulture);
+            time = float.Parse(infos[6], NumberStyles.Float, CultureInfo.InvariantCulture);
         }
         private static void SaveAsBmp(int width, int height, int[] data, string name)
         {
@@ -368,6 +378,22 @@ namespace FiniteDifferenceMethod
                     throw new Exception("Invalid variable type");
             }
         }
+
+        public int getFolderNumber()
+        {
+            return this.folderNumber;
+        }
+
+        public float getTimeStep()
+        {
+            return this.timeStep;
+        }
+
+        public float getTime()
+        {
+            return this.time;
+        }
+
     }
 }
 
