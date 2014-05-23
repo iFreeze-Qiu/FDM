@@ -20,7 +20,8 @@
         Interrupting,
         Autoscaling,
         Saving,
-        Loading
+        Loading,
+        Timing
     }
 
     internal interface IModel

@@ -197,9 +197,10 @@ namespace FiniteDifferenceMethod
             LockControls(false);
         }
 
-        private void textBox3_TextChanged(object sender, EventArgs e)
+        private void button14_Click_1(object sender, EventArgs e)
         {
-            LockControls(false);
+            _controller.DoSetTime(double.Parse(textBox3.Text, NumberStyles.Number, CultureInfo.InvariantCulture));
+            _view.Display();
         }
     }
 }

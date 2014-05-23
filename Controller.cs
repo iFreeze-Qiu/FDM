@@ -1,4 +1,10 @@
 ﻿using System.ComponentModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+using System.Collections;
 
 namespace FiniteDifferenceMethod
 {
@@ -10,9 +16,11 @@ namespace FiniteDifferenceMethod
         private IGridImage _image;
         private readonly BackgroundWorker _initializationWorker, _injectionWorker, _solveWorker;
         private readonly BackgroundWorker _interpolationWorker, _autoscaleWorker, _saveWorker, _loadWorker;
+        private readonly BackgroundWorker _setTiming;
         private double _precision;
         private int _stride;
         private string _fileName;
+        private double _time;
 
         public Controller(IView view)
         {
@@ -32,6 +40,7 @@ namespace FiniteDifferenceMethod
             _autoscaleWorker = new BackgroundWorker();
             _saveWorker = new BackgroundWorker();
             _loadWorker = new BackgroundWorker();
+            _setTiming = new BackgroundWorker();
             _view = view;
             _view.SetController(this);
             ModelState = ModelState.Generating;
@@ -79,14 +88,21 @@ namespace FiniteDifferenceMethod
             _saveWorker.RunWorkerCompleted += goToIdleing;
             _loadWorker.DoWork += delegate
                 {
-                 //   TimeGridImage timeGridImage = TimeGridImage.loadGridImages();
+                    TimeGridImage.loadGridImages();
                     //_model = new Model(GridImage.LoadFromProject(_fileName).ConvertToGrid());
-//                    _model = new Model(timeGridImage.ConvertToGrid());
+                    _model = new Model(TimeGridImage.getGridImage(0).ConvertToGrid());
                    // _model = new Model(TimeGridImage..ConvertToGrid());
-                    //ModelState = ModelState.Imageing;
-                    //_image = _model.ShowState();
+                    ModelState = ModelState.Imageing;
+                    _image = _model.ShowState();
                 };
             _loadWorker.RunWorkerCompleted += goToIdleing;
+
+            _setTiming.DoWork += delegate
+            {
+                ModelState = ModelState.Imageing;
+                _image = TimeGridImage.getGridImage(_time);
+            };
+            _setTiming.RunWorkerCompleted += goToIdleing;
         }
 
         public bool GetCell(int x, int y, int z, out Cell cell)
@@ -153,6 +169,15 @@ namespace FiniteDifferenceMethod
             if (ModelState != ModelState.Solving) return false;
             ModelState = ModelState.Interrupting;
             _model.StopExecution();
+            return true;
+        }
+        public bool DoSetTime(double time)
+        {
+            if (ModelState != ModelState.Idleing) return false;
+            ModelState = ModelState.Timing;
+            _time = time;
+            Console.WriteLine("time " + _time);
+            _setTiming.RunWorkerAsync();
             return true;
         }
 

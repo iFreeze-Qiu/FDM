@@ -7,19 +7,15 @@ using System.Collections;
 
 namespace FiniteDifferenceMethod
 {
-    class TimeGridImage : IGridImage
+    class TimeGridImage
     {
         private static readonly string DEFAULT_DIRECTORY_NAME = "Data";
         private static readonly int    IMAGES_IN_MEMORY = 3;
+        private static int n = 21;
+        private static double step = 0.1;
 
-        /*private List<GridImage> gridImageList = new List<GridImage>();
-        private List<double> time = new List<double>();
-=======*/
-        
-        //
         private static Dictionary<int, GridImage> gridImageDictionary = new Dictionary<int, GridImage>();
 
-        private GridImage currentGridImage;
 
 /*        private TimeGridImage(List<GridImage> gridImageList, List<double> time)
         {
@@ -28,14 +24,14 @@ namespace FiniteDifferenceMethod
             currentGridImage = gridImageList[1];
         }*/
 
-/*        public static TimeGridImage loadGridImages()
+        public static void loadGridImages()
         {
             loadGridImages(getIndexesToLoad(0, IMAGES_IN_MEMORY));
-        }*/
+        }
         
         private static void loadGridImages(int[] indexes)
         {
-            disposeUnmatched(indexes);
+            disposeUnmatched(indexes, gridImageDictionary);
             
             string directoryName;
             foreach (int indexer in indexes) {
@@ -47,9 +43,10 @@ namespace FiniteDifferenceMethod
                     gridImageDictionary.Add(gridImage.getFolderNumber(), gridImage);
                 }
             }            
+
         }
 
-        private static void disposeUnmatched(int[] indexesToLoad)
+        private static void disposeUnmatched(int[] indexesToLoad, Dictionary<int, GridImage> gridImageDictionary)
         {
             List<int> imagesToRemove = new List<int>();
             foreach (KeyValuePair<int, GridImage> entry in gridImageDictionary)
@@ -85,20 +82,9 @@ namespace FiniteDifferenceMethod
             return indexes;
         }
 
-        public void setCurrentGridImage(double time)
+        public static GridImage getGridImage(double time)
         {
-          /*  if (time >= gridImageList.Count)
-            {
-                //TODO: exception
-                Console.WriteLine("Index out of bounds. Size = " + gridImageList.Count.ToString() + " Required = " + time.ToString());
-            }
-
-            currentGridImage = gridImageList[timeToIndex(time)];*/
-        }
-
-        public GridImage getCurrentGridImage()
-        {
-            int index = 0;
+            int index = timeToIndex(time);
             if (!gridImageDictionary.ContainsKey(index))
             {
                 loadGridImages(getIndexesToLoad(index, IMAGES_IN_MEMORY));
@@ -111,71 +97,15 @@ namespace FiniteDifferenceMethod
             return gridImageDictionary[index];
         }
 
-
+        
         //------------------------------------ ЗАПОЛНИТЬ!---------------------
 
-        public bool IsATruncatedByColor { get; private set; }
-        public bool IsBTruncatedByColor { get; private set; }
-        public bool IsMTruncatedByColor { get; private set; }
-        public bool IsJTruncatedByColor { get; private set; }
 
-
-        public IConverter Converter { get; private set; }
-
-
-        public int Width { get { return currentGridImage.Width; } }
-        public int Height { get { return currentGridImage.Height; } }
-        public int Depth { get { return currentGridImage.Depth; } }
-        public float Step { get { return currentGridImage.Step; } }
-
-        public IGrid ConvertToGrid()
+        public static int timeToIndex(double time)
         {
-            return currentGridImage.ConvertToGrid();
-        }
-
-        public int[] GetLayerX(VariableType variable, int x)
-        {
-            return currentGridImage.GetLayerX(variable, x);
-        }
-
-        public void SetLayerX(int[] data, VariableType variable, int x)
-        {
-            currentGridImage.SetLayerX(data, variable, x);
-        }
-
-        public int[] GetLayerY(VariableType variable, int y)
-        {
-            return currentGridImage.GetLayerY(variable, y);
-        }
-
-        public void SetLayerY(int[] data, VariableType variable, int y)
-        {
-            currentGridImage.SetLayerY(data, variable, y);
-        }
-
-        public int[] GetLayerZ(VariableType variable, int z)
-        {
-            return currentGridImage.GetLayerZ(variable, z);
-        }
-
-        public void SetLayerZ(int[] data, VariableType variable, int z)
-        {
-            currentGridImage.SetLayerZ(data, variable, z);
-        }
-
-        public int GetPoint(VariableType variable, int x, int y, int z)
-        {
-            return currentGridImage.GetPoint(variable, x, y, z);
-        }
-
-        public void Save(string projectName)
-        {
-            currentGridImage.Save(projectName);
-        }
-
-        private int timeToIndex(double time)
-        {
-            return (int)time;
+            double TimeMax = n * step;
+            time = ((int)time / step) * step;
+            return (int)((time * n) / TimeMax);
         }
     }
 }
