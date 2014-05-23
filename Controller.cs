@@ -79,9 +79,9 @@ namespace FiniteDifferenceMethod
             _saveWorker.RunWorkerCompleted += goToIdleing;
             _loadWorker.DoWork += delegate
                 {
-                    TimeGridImage.loadGridImages(TimeGridImage.getIndexesToLoad(0, TimeGridImage.IMAGES_IN_MEMORY));
+                    TimeGridImage.loadGridImages();
                     //_model = new Model(GridImage.LoadFromProject(_fileName).ConvertToGrid());
-                    _model = new Model(TimeGridImage.getGridImage(14).ConvertToGrid());
+                    _model = new Model(TimeGridImage.getGridImage(0).ConvertToGrid());
                     ModelState = ModelState.Imageing;
                     _image = _model.ShowState();
                 };
